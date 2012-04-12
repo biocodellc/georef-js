@@ -24,14 +24,14 @@ function Georef(decimalLatitude, decimalLongitude, coordinateUncertaintyInMeters
     this.georeferenceVerificationStatus;  // not in use
 
     this.print = print;
-    function print(div) {
+    function print() {
         var resultsString = "";
         resultsString += "<p>" + this.decimalLatitude + "/" + this.decimalLongitude;
         resultsString += " (" + this.coordinateUncertaintyInMeters + " meter uncertainty)";
         resultsString += "<br>geodeticDatum=" + this.geodeticDatum;
         resultsString += "<br>georeferenceProtocol=" + this.georeferenceProtocol;
         resultsString += "<br>georeferenceRemarks=" + this.georeferenceRemarks;
-        div.innerHTML += resultsString;
+        return resultsString;
     }
 }
 
