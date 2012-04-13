@@ -46,6 +46,8 @@ function googleGeoref(s, callback) {
         geocoder.geocode({'address': s}, function(results, status) {
             if (status == google.maps.GeocoderStatus.OK) {
                 if (results[0]) {
+                    // empty array before we populate it
+                    georefjs.georefs.length = 0;
                     for (i = 0; i < results.length; i++) {
                         var georef = new Georef(
                             results[i].geometry.location.lat().toFixed(4),
