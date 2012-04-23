@@ -3,24 +3,29 @@
     <script type="text/javascript" src="georef.js"></script>
     <script>
         function exampleGoogleCall(s) {
+            var div = document.getElementById("results");
+            div.innerHTML = "";
             // Call the google Georef Function and get array of georefs and print them to results div
-            googleGeoref(s, function(georefs) {
-                var div = document.getElementById("results");
-                div.innerHTML = "";
+            georefjs.googleGeoref(s, function(georefs) {
                 for (i = 0; i < georefs.length; i++) {
                     div.innerHTML += georefs[i].print();
                 }
             });
         }
-         function exampleBGCall(s) {
+        function exampleBGCall(s) {
+            var div = document.getElementById("results");
+            div.innerHTML = "";
             // Call the google Georef Function and get array of georefs and print them to results div
-            bgGeoref(s, function(georefs) {
-                var div = document.getElementById("results");
-                div.innerHTML = "";
+            georefjs.bgGeoref(s, function(georefs) {
                 for (i = 0; i < georefs.length; i++) {
                     div.innerHTML += georefs[i].print();
                 }
             });
+        }
+        function exampleDMSCall(strLat,strLng) {
+            var geo = georefjs.dmsGeoref(strLat,strLng);
+            var div = document.getElementById("results");
+            div.innerHTML = geo.georefs[0].print();
         }
     </script>
 </head>
@@ -33,6 +38,8 @@
     <br><input id=dms type=textbox value="w 121 30 N 045 00' 00">
     <input type=button value="Google Georef" onclick='exampleGoogleCall(dms.value);'>
     <input type=button value="BG Georef" onclick='exampleBGCall(dms.value);'>
+    <br>Latitude: <input id=lat type=textbox value="W120 00 00"> Longitude: <input id=lng type=textbox value="N45 00 00">
+    <input type=button value="DMS Georef" onclick='exampleDMSCall(lat.value,lng.value);'>
 
 
 <p><b>Results:</b>
@@ -41,16 +48,38 @@
 <div id=results
      style="border : solid 1px #000000; background : #dddddd; padding : 4px; width : 800px; height : 200px; overflow : auto; "></div>
 
-<p><b>Documentation:</b></p>
+<p><b>Documentation</b></p>
 This project is a suite of general-purpose georeferencing tools which can be incorporated into other software as an
 embedded javascript library, or used on its own. See the example on this page on how to call georef.js. You must include
-the Google Maps api, v3 javascript library with the geometry library attached and include the georef.js file. Returned
-from georeferencing calls, e.g.
-googleGeoref(String), is an array of georef objects. Ambiguous searches, (e.g "San Jose")
-will return multiple possibilities in the array. Less ambiguous searches (e.g. DMS) will return just one result and the
-consuming application may choose to just consume the first element in the array. Multiple results may need to be parsed
-in a map application which would then allow the user to choose the best possible fit. The georef object properties
-include:
+the Google Maps api, v3 javascript library with the geometry library attached and include the georef.js file.
+<p>
+    <b>googleGeoref(String)</b>
+    <br><i>Returns Array of georef objects</i>
+
+    <br>
+    Returned from georeferencing calls, e.g.
+    googleGeoref(String), is an array of georef objects. Ambiguous searches, (e.g "San Jose")
+    will return multiple possibilities in the array. Less ambiguous searches will return just one result and the
+    consuming application may choose to just consume the first element in the array. Multiple results may need to be
+    parsed
+    in a map application which would then allow the user to choose the best possible fit.
+
+<p>
+    <b>bgGeoref(String)</b>
+    <br><i>Returns Array of georef objects</i>
+    <br>
+    Returned from bioGeomancer, not implemented yet.
+
+<p>
+    <b>dmsGeoref(String)</b>
+    <br><i>Returns Array of georef objects</i>
+
+    <br>
+    Georeference just Degree Minutes Seconds
+
+<p>
+    <b>Georef Object</b>:
+    <br>
 <ul>
     <li><a href="http://rs.tdwg.org/dwc/terms/decimalLatitude">decimalLatitude</a></li>
     <li><a href="http://rs.tdwg.org/dwc/terms/decimalLongitude">decimalLongitude</a></li>

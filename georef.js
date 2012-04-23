@@ -10,7 +10,7 @@ georefjs.georefs = new Array();                     // Array to hold multiple ge
  * @param georeferenceProtocol
  * @param georeferenceRemarks
  */
-function Georef(decimalLatitude, decimalLongitude, coordinateUncertaintyInMeters, geodeticDatum, georeferenceProtocol, georeferenceRemarks) {
+georefjs.Georef = function(decimalLatitude, decimalLongitude, coordinateUncertaintyInMeters, geodeticDatum, georeferenceProtocol, georeferenceRemarks) {
     this.decimalLatitude = decimalLatitude;
     this.decimalLongitude = decimalLongitude;
     this.coordinateUncertaintyInMeters = coordinateUncertaintyInMeters;
@@ -36,11 +36,43 @@ function Georef(decimalLatitude, decimalLongitude, coordinateUncertaintyInMeters
 }
 
 /**
+ * Code from http://stackoverflow.com/questions/5970961/regular-expression-javascript-convert-degrees-minutes-seconds-to-decimal-degree
+ * @param s
+ */
+georefjs.dms2deg = function g(s) {
+  var sw = /[sw]/i.test(s);
+  var f = sw? -1 : 1;
+  var bits = s.match(/[\d.]+/g);
+
+  var result = 0;
+  for (var i=0, iLen=bits.length; i<iLen; i++) {
+    result += bits[i]/f;
+    f *= 60;
+    }
+  return result.toFixed(6);
+}
+
+/**
+ * Georeference DMS seconds value, expects lat/lng in same string
+ * @param s
+ */
+georefjs.dmsGeoref = function(pLat, pLng) {
+    georefjs.georefs[0] = new georefjs.Georef(
+        georefjs.dms2deg(pLat),
+        georefjs.dms2deg(pLng),
+        null,
+        "WGS84",
+        "Conversion from DMS to DD",
+        "Direct conversion from DMS to DD using http://www.movable-type.co.uk/scripts/latlong.html#geo-src");
+    return georefjs;
+}
+
+/**
  * Geoference using Google Services
  * @param s
  * @param callback
  */
-function googleGeoref(s, callback) {
+georefjs.googleGeoref = function(s, callback) {
     var geocoder = new google.maps.Geocoder();
     if (geocoder) {
         geocoder.geocode({'address': s}, function(results, status) {
@@ -49,10 +81,10 @@ function googleGeoref(s, callback) {
                     // empty array before we populate it
                     georefjs.georefs.length = 0;
                     for (i = 0; i < results.length; i++) {
-                        var georef = new Georef(
-                            results[i].geometry.location.lat().toFixed(4),
-                            results[i].geometry.location.lng().toFixed(4),
-                            getRadiusFromViewPort(results[i].geometry.viewport),
+                        var georef = new georefjs.Georef(
+                            results[i].geometry.location.lat().toFixed(6),
+                            results[i].geometry.location.lng().toFixed(6),
+                            georefjs.getRadiusFromViewPort(results[i].geometry.viewport),
                             "WGS84",
                             "Google Maps GeoCoding Service API v3",
                             "Google location_type is " + results[i].geometry.location_type
@@ -74,7 +106,7 @@ function googleGeoref(s, callback) {
  *  Determine coordinateUncertaintyInMeters from viewport
  * @param viewport
  */
-function getRadiusFromViewPort(viewport) {
+georefjs.getRadiusFromViewPort = function(viewport) {
     center = viewport.getCenter();
     ne = viewport.getNorthEast();
     return Math.round(google.maps.geometry.spherical.computeDistanceBetween(center, ne));
@@ -85,24 +117,24 @@ function getRadiusFromViewPort(viewport) {
  * @param s
  * @param callback
  */
-function bgGeoref(s, callback) {
+georefjs.bgGeoref = function(s, callback) {
     //http://bg.berkeley.edu:8080/ws/single?locality=Santa%20Cruz,CA
-     /*
-        var xmlhttp;
-        if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
-            xmlhttp = new XMLHttpRequest();
-        }
-        else {// code for IE6, IE5
-            xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
-        }
-        xmlhttp.onreadystatechange = function() {
-            if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
-               alert(xmlhttp.responseText);
-                // Insert here assignments from XML to georef object variables
-            }
-        }
-        xmlhttp.open("GET", "http://bg.berkeley.edu:8080/ws/single?locality=" + s, true);
-        xmlhttp.send();
-    */
+    /*
+     var xmlhttp;
+     if (window.XMLHttpRequest) {// code for IE7+, Firefox, Chrome, Opera, Safari
+     xmlhttp = new XMLHttpRequest();
+     }
+     else {// code for IE6, IE5
+     xmlhttp = new ActiveXObject("Microsoft.XMLHTTP");
+     }
+     xmlhttp.onreadystatechange = function() {
+     if (xmlhttp.readyState == 4 && xmlhttp.status == 200) {
+     alert(xmlhttp.responseText);
+     // Insert here assignments from XML to georef object variables
+     }
+     }
+     xmlhttp.open("GET", "http://bg.berkeley.edu:8080/ws/single?locality=" + s, true);
+     xmlhttp.send();
+     */
 }
 
