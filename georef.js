@@ -22,7 +22,6 @@ georefjs.Georef = function(decimalLatitude, decimalLongitude, coordinateUncertai
     this.georeferencedDate;               // not in use
     this.georeferenceSources;             // not in use
     this.georeferenceVerificationStatus;  // not in use
-    //
 
     this.print = print;
     function print() {
