@@ -26,8 +26,9 @@ georefjs.Georef = function(decimalLatitude, decimalLongitude, coordinateUncertai
     this.print = print;
     function print() {
         // Print using appropriate RDFa tags
-        var resultsString = "<div " +
-            "id=\"content\" about=\"" + aboutID + "\" typeof=\"http://purl.org/dc/terms/Location\">";
+        var resultsString = "";
+        //resultsString = "<div " +
+        //    "id=\"content\" about=\"" + aboutID + "\" typeof=\"http://purl.org/dc/terms/Location\">";
 
         resultsString += "<li>Coordinate: " +
             "<span property=\"http://rs.tdwg.org/dwc/terms/decimalLatitude\">" + this.decimalLatitude + "</span>" +
@@ -47,7 +48,7 @@ georefjs.Georef = function(decimalLatitude, decimalLongitude, coordinateUncertai
  * @param s
  */
 georefjs.dms2deg = function g(s) {
-    var sw = /[sw]/i.test(s);
+    var sw = /[sw-]/i.test(s);
     var f = sw ? -1 : 1;
     var bits = s.match(/[\d.]+/g);
 
