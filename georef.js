@@ -51,9 +51,19 @@ georefjs.dms2deg = function g(s) {
     var sw = /[sw-]/i.test(s);
     var f = sw ? -1 : 1;
     var bits = s.match(/[\d.]+/g);
+    var lat = /[we]/i.test(s);
+    var lng = /[ns]/i.test(s);
 
     var result = 0;
     for (var i = 0, iLen = bits.length; i < iLen; i++) {
+        //  Validate lat input
+        if (lat && (bits[0] > 180 || bits[0] < -180 || bits[1] > 60 || bits[1] < -60 || bits[2] > 60 || bits[2] < -60)) {
+            return false;
+        }
+        //  Validate lng input
+        if (lng && (bits[0] > 90 || bits[0] < -90 || bits[1] > 60 || bits[1] < -60 || bits[2] > 60 || bits[2] < -60)) {
+            return false;
+        }
         result += bits[i] / f;
         f *= 60;
     }
@@ -65,13 +75,25 @@ georefjs.dms2deg = function g(s) {
  * @param s
  */
 georefjs.dmsGeoref = function(pLat, pLng) {
-    georefjs.georefs[0] = new georefjs.Georef(
-        georefjs.dms2deg(pLat),
-        georefjs.dms2deg(pLng),
-        null,
-        "WGS84",
-        "Conversion from DMS to DD",
-        "Direct conversion from DMS to DD using http://www.movable-type.co.uk/scripts/latlong.html#geo-src");
+    var lat = georefjs.dms2deg(pLat);
+    var lng = georefjs.dms2deg(pLng);
+    if (!lat || !lng) { 
+        georefjs.georefs[0] = new georefjs.Georef(
+            null,
+            null,
+            null,
+            "",
+            "Conversion from DMS to DD",
+            "Unable to convert from DMS to DD due to lat/lng out of bounds error or mal-formed input");
+    } else {
+        georefjs.georefs[0] = new georefjs.Georef(
+            lat,
+            lng,
+            null,
+            "WGS84",
+            "Conversion from DMS to DD",
+            "Direct conversion from DMS to DD"); 
+    }
     return georefjs;
 }
 
