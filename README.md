@@ -1,1 +1,1 @@
-This collection of functions is based on Darwin Core's Georeferencing terminology and aids in interfacing in providing wrappers to georeferencing services. This includes Google Maps, and will also include Geolocate and Biogeomancer services.
+A collection of useful javascript functions based on Darwin Core's Georeferencing terminology, providing wrappers to external georeferencing services. This includes Google Maps, and will also include, at some future date, Geolocate and Biogeomancer services.
